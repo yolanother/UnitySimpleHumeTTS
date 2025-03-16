@@ -26,11 +26,13 @@ UnitySimpleHumeTTS is a Unity package that allows developers to easily integrate
 
 2. Open your Unity project.
 
-3. In Unity, go to `Assets > Import Package > Custom Package...`.
+3. In Unity, go to `Window > Package Manager`.
 
-4. Select the `UnitySimpleHumeTTS.unitypackage` file from the cloned repository.
+4. Click the `+` button and select `Add package from disk...`.
 
-5. Click `Import` to add the package to your project.
+5. Navigate to the cloned repository and select the `package.json` file.
+
+6. Click `Open` to add the package to your project.
 
 ### Using Unity Package Manager
 
@@ -42,7 +44,7 @@ UnitySimpleHumeTTS is a Unity package that allows developers to easily integrate
 
 4. Enter the GitHub repository URL:
    ```
-   https://github.com/yolanother/UnitySimpleHumeTTS.git
+   git clone https://github.com/yolanother/UnitySimpleHumeTTS.git
    ```
 
 5. Click `Add` to install the package.
