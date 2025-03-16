@@ -1,0 +1,14 @@
+{
+  "name": "com.doubtech.thirdparty.ai.hume",
+  "displayName": "DoubTech - AI - Hume",
+  "version": "0.0.1",
+  "unity": "2023.1",
+  "description": "",
+  "keywords": [],
+  "category": "Scripts",
+  "type": "tool",
+  "author": {
+    "name": "Doubling Technologies",
+    "url": "https://github.com/yolanother/UnitySimpleHumeTTS"
+  }
+}
