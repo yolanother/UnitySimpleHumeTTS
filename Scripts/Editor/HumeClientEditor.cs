@@ -17,11 +17,13 @@ namespace DoubTech.ThirdParty.AI.Hume
     {
         private string text = "";
         private string description = "";
+        private string voiceName = "My Custom Voice";
         private Texture2D waveformTexture;
         private AudioClip lastAudioClip;
         private string errorMessage = "";
         private string requestStatus = "";
         private string generationId = "";
+        private AudioTask? currentAudioTask;
 
         private void OnEnable()
         {
@@ -141,10 +143,10 @@ namespace DoubTech.ThirdParty.AI.Hume
             GUILayout.BeginVertical();
 
             GUILayout.Label("Text", EditorStyles.miniLabel);
-            text = EditorGUILayout.TextArea(text, GUILayout.MinHeight(EditorGUIUtility.singleLineHeight * 3));
+            text = GUILayout.TextArea(text, GUILayout.MinHeight(EditorGUIUtility.singleLineHeight * 3), GUILayout.ExpandWidth(true));
 
             GUILayout.Label("Description", EditorStyles.miniLabel);
-            description = EditorGUILayout.TextArea(description, GUILayout.MinHeight(EditorGUIUtility.singleLineHeight * 3));
+            description = GUILayout.TextArea(description, GUILayout.MinHeight(EditorGUIUtility.singleLineHeight * 3), GUILayout.ExpandWidth(true));
 
             GUILayout.Space(10);
             GUI.enabled = Application.isPlaying;
@@ -171,9 +173,38 @@ namespace DoubTech.ThirdParty.AI.Hume
 
             if (!string.IsNullOrEmpty(generationId))
             {
-                if (GUILayout.Button($"Generation ID: {generationId}"))
+                // Check if the utterance had a voice ID
+                bool hadVoiceId = false;
+                if (currentAudioTask.HasValue && currentAudioTask.Value.Utterance.Voice != null && !string.IsNullOrEmpty(currentAudioTask.Value.Utterance.Voice.Id))
                 {
-                    EditorGUIUtility.systemCopyBuffer = generationId;
+                    hadVoiceId = true;
+                }
+
+                // If the utterance didn't have a voice ID, show the Create Voice button and name input
+                if (!hadVoiceId)
+                {
+                    GUILayout.Label("Create Custom Voice", EditorStyles.boldLabel);
+                    
+                    // Input field for the voice name
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label("Voice Name:", GUILayout.Width(80));
+                    voiceName = EditorGUILayout.TextField(voiceName);
+                    GUILayout.EndHorizontal();
+                    
+                    GUI.enabled = Application.isPlaying && !string.IsNullOrEmpty(voiceName);
+                    if (GUILayout.Button("Create Voice"))
+                    {
+                        CreateVoiceAsync(humeClient, generationId, voiceName);
+                    }
+                    GUI.enabled = true;
+                }
+                else
+                {
+                    // If the utterance had a voice ID, just show the Generation ID
+                    if (GUILayout.Button($"Generation ID: {generationId}"))
+                    {
+                        EditorGUIUtility.systemCopyBuffer = generationId;
+                    }
                 }
             }
 
@@ -289,6 +320,27 @@ namespace DoubTech.ThirdParty.AI.Hume
         {
             requestStatus = status;
             generationId = audioTask?.GenerationId;
+            currentAudioTask = audioTask;
+            Repaint();
+        }
+
+        /// <summary>
+        /// Calls the CreateVoice method on the HumeClient asynchronously
+        /// </summary>
+        private async void CreateVoiceAsync(HumeClient humeClient, string generationId, string name)
+        {
+            string voiceId = await humeClient.CreateVoice(generationId, name);
+            if (!string.IsNullOrEmpty(voiceId))
+            {
+                Debug.Log($"Successfully created voice: {name} ({voiceId})");
+                // Set the newly created voice as the selected voice
+                humeClient.VoiceId = voiceId;
+                EditorUtility.SetDirty(target);
+            }
+            else
+            {
+                Debug.LogError("Failed to create voice.");
+            }
             Repaint();
         }
 

@@ -65,6 +65,32 @@ namespace DoubTech.ThirdParty.AI.Hume
         [JsonProperty("custom_voices_page")]
         public List<CustomVoice> CustomVoicesPage;
     }
+
+    /// <summary>
+    /// Request to create a custom voice
+    /// </summary>
+    [Serializable]
+    public class CreateVoiceRequest
+    {
+        [JsonProperty("generation_id")]
+        public string GenerationId;
+        
+        [JsonProperty("name")]
+        public string Name;
+    }
+
+    /// <summary>
+    /// Response from the Hume API for creating a custom voice
+    /// </summary>
+    [Serializable]
+    public class CreateVoiceResponse
+    {
+        [JsonProperty("name")]
+        public string Name;
+        
+        [JsonProperty("id")]
+        public string Id;
+    }
     
     public struct AudioTask
     {

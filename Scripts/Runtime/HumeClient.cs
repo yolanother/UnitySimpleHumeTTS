@@ -268,6 +268,82 @@ namespace DoubTech.ThirdParty.AI.Hume
         }
 
         /// <summary>
+        /// Creates a custom voice using a generation ID.
+        /// </summary>
+        /// <param name="generationId">The generation ID to use for creating the voice.</param>
+        /// <param name="name">The name for the custom voice.</param>
+        /// <returns>A task representing the asynchronous operation. Returns the created voice ID if successful, null otherwise.</returns>
+        public async Task<string> CreateVoice(string generationId, string name)
+        {
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                OnError?.Invoke("API key is not set.");
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(generationId))
+            {
+                OnError?.Invoke("Generation ID is required to create a voice.");
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(name))
+            {
+                OnError?.Invoke("Name is required to create a voice.");
+                return null;
+            }
+
+            OnRequestStatusChanged?.Invoke("Creating custom voice...", null);
+
+            try
+            {
+                var requestBody = new CreateVoiceRequest
+                {
+                    GenerationId = generationId,
+                    Name = name
+                };
+
+                var json = JsonConvert.SerializeObject(requestBody);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var request = new HttpRequestMessage(HttpMethod.Post, "https://api.hume.ai/v0/tts/voices")
+                {
+                    Headers =
+                    {
+                        { "X-Hume-Api-Key", apiKey }
+                    },
+                    Content = content
+                };
+
+                var response = await _httpClient.SendAsync(request);
+                var responseBody = await response.Content.ReadAsStringAsync();
+                response.EnsureSuccessStatusCode();
+
+                var responseJson = JsonConvert.DeserializeObject<CreateVoiceResponse>(responseBody);
+                string voiceId = responseJson.Id;
+
+                // Update the available voices list
+                await UpdateVoices();
+
+                OnRequestStatusChanged?.Invoke($"Successfully created voice: {name} ({voiceId})", null);
+                return voiceId;
+            }
+            catch (HttpRequestException ex)
+            {
+                string formattedResponseBody = FormatJson(ex.Message);
+                OnError?.Invoke($"Failed to create voice: {formattedResponseBody}");
+                OnRequestStatusChanged?.Invoke("Failed to create voice.", null);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                OnError?.Invoke($"Failed to create voice: {ex.Message}");
+                OnRequestStatusChanged?.Invoke("Failed to create voice.", null);
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Updates the list of available voices from the Hume API.
         /// </summary>
         /// <returns>A task representing the asynchronous operation. Returns true if successful, false otherwise.</returns>
