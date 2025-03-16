@@ -18,7 +18,7 @@ UnitySimpleHumeTTS is a Unity package that allows developers to easily integrate
 
 1. Clone the repository from GitHub:
    ```sh
-   git clone https://github.com/yourusername/UnitySimpleHumeTTS.git
+   git clone https://github.com/yolanother/UnitySimpleHumeTTS.git
    ```
 
 2. Open your Unity project.
@@ -39,7 +39,7 @@ UnitySimpleHumeTTS is a Unity package that allows developers to easily integrate
 
 4. Enter the GitHub repository URL:
    ```
-   https://github.com/yourusername/UnitySimpleHumeTTS.git
+   https://github.com/yolanother/UnitySimpleHumeTTS.git
    ```
 
 5. Click `Add` to install the package.
