@@ -5,6 +5,7 @@ A simple Unity library for requesting TTS via Hume.
 ## Description
 
 UnitySimpleHumeTTS is a Unity package that allows developers to easily integrate Text-to-Speech (TTS) functionality into their Unity projects using the Hume service.
+
 ![image](https://github.com/user-attachments/assets/36dfc3b2-a1a5-4c8f-8845-e3d060d8af48)
 
 
