@@ -60,78 +60,81 @@ namespace DoubTech.ThirdParty.AI.Hume
                 EditorUtility.SetDirty(target);
             }
 
-            GUILayout.Space(10);
-
-            GUILayout.BeginVertical("Voice Selection", GUI.skin.box);
-            GUILayout.Space(10);
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Space(10);
-            GUILayout.BeginVertical();
-
-            // Voice selection dropdown
-            GUILayout.Space(5);
-            GUILayout.Label("Select Voice", EditorStyles.boldLabel);
-            
-            // Create a list of display options with "New Voice" as the first option
-            List<string> voiceOptions = new List<string> { "New Voice" };
-            
-            // Add available voices to the options
-            foreach (var voice in humeClient.AvailableVoices)
+            if(humeClient.AvailableVoices.Count > 0)
             {
-                string displayName = string.IsNullOrEmpty(voice.Name) ? voice.Id : $"{voice.Name} ({voice.Id})";
-                voiceOptions.Add(displayName);
-            }
+                GUILayout.Space(10);
 
-            // Find the current index
-            int currentIndex = 0;
-            if (!string.IsNullOrEmpty(humeClient.VoiceId))
-            {
-                for (int i = 0; i < humeClient.AvailableVoices.Count; i++)
+                GUILayout.BeginVertical("Voice Selection", GUI.skin.box);
+                GUILayout.Space(10);
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Space(10);
+                GUILayout.BeginVertical();
+
+                // Voice selection dropdown
+                GUILayout.Space(5);
+                GUILayout.Label("Select Voice", EditorStyles.boldLabel);
+                
+                // Create a list of display options with "New Voice" as the first option
+                List<string> voiceOptions = new List<string> { "New Voice" };
+                
+                // Add available voices to the options
+                foreach (var voice in humeClient.AvailableVoices)
                 {
-                    if (humeClient.AvailableVoices[i].Id == humeClient.VoiceId)
+                    string displayName = string.IsNullOrEmpty(voice.Name) ? voice.Id : $"{voice.Name} ({voice.Id})";
+                    voiceOptions.Add(displayName);
+                }
+
+                // Find the current index
+                int currentIndex = 0;
+                if (!string.IsNullOrEmpty(humeClient.VoiceId))
+                {
+                    for (int i = 0; i < humeClient.AvailableVoices.Count; i++)
                     {
-                        currentIndex = i + 1; // +1 because "New Voice" is at index 0
-                        break;
+                        if (humeClient.AvailableVoices[i].Id == humeClient.VoiceId)
+                        {
+                            currentIndex = i + 1; // +1 because "New Voice" is at index 0
+                            break;
+                        }
                     }
                 }
-            }
 
-            GUILayout.BeginHorizontal();
-            // Display the dropdown
-            int selectedIndex = EditorGUILayout.Popup("Voice", currentIndex, voiceOptions.ToArray());
+                GUILayout.BeginHorizontal();
+                // Display the dropdown
+                int selectedIndex = EditorGUILayout.Popup("Voice", currentIndex, voiceOptions.ToArray());
 
-            // Button to update voices
-            if (GUILayout.Button("Refresh", GUILayout.Width(75)))
-            {
-                UpdateVoicesAsync(humeClient);
-            }
-            GUILayout.EndHorizontal();
-            
-            // Handle selection change
-            if (selectedIndex != currentIndex)
-            {
-                if (selectedIndex == 0)
+                // Button to update voices
+                if (GUILayout.Button("Refresh", GUILayout.Width(75)))
                 {
-                    // "New Voice" selected - clear the voice ID
-                    humeClient.VoiceId = null;
+                    UpdateVoicesAsync(humeClient);
                 }
-                else
-                {
-                    // A specific voice was selected
-                    humeClient.VoiceId = humeClient.AvailableVoices[selectedIndex - 1].Id;
-                }
+                GUILayout.EndHorizontal();
                 
-                // Mark the object as dirty to ensure changes are saved
-                EditorUtility.SetDirty(target);
+                // Handle selection change
+                if (selectedIndex != currentIndex)
+                {
+                    if (selectedIndex == 0)
+                    {
+                        // "New Voice" selected - clear the voice ID
+                        humeClient.VoiceId = null;
+                    }
+                    else
+                    {
+                        // A specific voice was selected
+                        humeClient.VoiceId = humeClient.AvailableVoices[selectedIndex - 1].Id;
+                    }
+                    
+                    // Mark the object as dirty to ensure changes are saved
+                    EditorUtility.SetDirty(target);
+                }
+
+                GUILayout.EndVertical();
+                GUILayout.Space(10);
+                GUILayout.EndHorizontal();
+
+                GUILayout.Space(10);
+                GUILayout.EndVertical();
             }
-
-            GUILayout.EndVertical();
-            GUILayout.Space(10);
-            GUILayout.EndHorizontal();
-
-            GUILayout.Space(10);
-            GUILayout.EndVertical();
 
             GUILayout.Space(24);
 
@@ -226,8 +229,8 @@ namespace DoubTech.ThirdParty.AI.Hume
                 GUILayout.Label("Utterance Context", EditorStyles.boldLabel);
                 foreach (var utterance in context)
                 {
-                    GUILayout.Label($"Text: {utterance.Text}");
-                    GUILayout.Label($"Description: {utterance.Description}");
+                    GUILayout.Label($"Text: {utterance.Text}", EditorStyles.wordWrappedLabel);
+                    GUILayout.Label($"Description: {utterance.Description}", EditorStyles.wordWrappedLabel);
                     GUILayout.Space(5);
                 }
             }

@@ -2,8 +2,7 @@
     "name": "SimpleHumeEditor",
     "rootNamespace": "DoubTech.ThirdParty.Hume",
     "references": [
-        "GUID:b22586c3f82eaa9459e16a6c7de83f1f",
-        "HumeClientRuntime"
+        "GUID:b22586c3f82eaa9459e16a6c7de83f1f"
     ],
     "includePlatforms": [
         "Editor"
